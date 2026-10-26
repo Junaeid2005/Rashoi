@@ -1,0 +1,265 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile data for customers and administrators",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Admin authorization entry",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "MenuCategory": {
+      "title": "MenuCategory",
+      "description": "A food category in the digital menu",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "displayOrder": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "displayOrder", "isActive"]
+    },
+    "MenuItem": {
+      "title": "MenuItem",
+      "description": "Individual dish or meal product in the menu",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "basePrice": { "type": "number" },
+        "variants": { "type": "array" },
+        "imageUrl": { "type": "string" },
+        "isAvailable": { "type": "boolean" },
+        "isFeatured": { "type": "boolean" },
+        "displayOrder": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "categoryId", "name", "isAvailable", "displayOrder"]
+    },
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Global restaurant settings, contact information, hours, and content",
+      "type": "object",
+      "properties": {
+        "restaurantName": { "type": "string" },
+        "brandSubtitle": { "type": "string" },
+        "establishedYear": { "type": "number" },
+        "address": { "type": "object" },
+        "phoneNumbers": { "type": "array" },
+        "contactEmail": { "type": "string" },
+        "whatsappNumber": { "type": "string" },
+        "websiteUrl": { "type": "string" },
+        "googleMapsUrl": { "type": "string" },
+        "openingHours": { "type": "object" },
+        "collectionDiscount": { "type": "object" },
+        "collectionOrderingEnabled": { "type": "boolean" },
+        "hero": { "type": "object" },
+        "aboutText": { "type": "string" },
+        "allergenNotice": { "type": "string" },
+        "sundaySpecial": { "type": "object" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["restaurantName", "address", "phoneNumbers"]
+    },
+    "Reservation": {
+      "title": "Reservation",
+      "description": "Table reservation request",
+      "type": "object",
+      "properties": {
+        "reservationId": { "type": "string" },
+        "customerUid": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "reservationDate": { "type": "string" },
+        "reservationTime": { "type": "string" },
+        "numberOfGuests": { "type": "number" },
+        "specialRequests": { "type": "string" },
+        "status": { "type": "string" },
+        "internalNotes": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["reservationId", "customerUid", "customerName", "customerEmail", "customerPhone", "reservationDate", "reservationTime", "numberOfGuests", "status"]
+    },
+    "ReservationDate": {
+      "title": "ReservationDate",
+      "description": "Date-specific fully booked and availability status",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "isFullyBooked": { "type": "boolean" },
+        "closureReason": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["date", "isFullyBooked"]
+    },
+    "ReservationSlot": {
+      "title": "ReservationSlot",
+      "description": "Specific time slot availability override",
+      "type": "object",
+      "properties": {
+        "slotKey": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "isClosed": { "type": "boolean" },
+        "reason": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["slotKey", "date", "time", "isClosed"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Collection takeaway food order",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string" },
+        "customerUid": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "discountPercent": { "type": "number" },
+        "discountAmount": { "type": "number" },
+        "total": { "type": "number" },
+        "collectionDate": { "type": "string" },
+        "collectionTime": { "type": "string" },
+        "status": { "type": "string" },
+        "notes": { "type": "string" },
+        "internalNotes": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["orderId", "customerUid", "customerName", "customerEmail", "customerPhone", "items", "subtotal", "total", "collectionDate", "collectionTime", "status"]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "Customer feedback and complaints submission",
+      "type": "object",
+      "properties": {
+        "feedbackId": { "type": "string" },
+        "customerUid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "category": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string" },
+        "internalNotes": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["feedbackId", "name", "email", "category", "message", "status"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Approved testimonial or featured review",
+      "type": "object",
+      "properties": {
+        "reviewId": { "type": "string" },
+        "reviewerName": { "type": "string" },
+        "text": { "type": "string" },
+        "rating": { "type": "number" },
+        "date": { "type": "string" },
+        "isFeatured": { "type": "boolean" },
+        "isVisible": { "type": "boolean" },
+        "displayOrder": { "type": "number" },
+        "source": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["reviewId", "reviewerName", "text", "rating", "isVisible"]
+    },
+    "MediaItem": {
+      "title": "MediaItem",
+      "description": "Image library item and metadata",
+      "type": "object",
+      "properties": {
+        "mediaId": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "storagePath": { "type": "string" },
+        "altText": { "type": "string" },
+        "category": { "type": "string" },
+        "usedIn": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["mediaId", "name", "url"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profiles"
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Admin authorization records"
+    },
+    "/menuCategories/{categoryId}": {
+      "schema": { "$ref": "#/entities/MenuCategory" },
+      "description": "Menu categories list"
+    },
+    "/menuItems/{itemId}": {
+      "schema": { "$ref": "#/entities/MenuItem" },
+      "description": "Menu food items"
+    },
+    "/siteSettings/{settingId}": {
+      "schema": { "$ref": "#/entities/SiteSettings" },
+      "description": "Website business and configuration settings"
+    },
+    "/reservations/{reservationId}": {
+      "schema": { "$ref": "#/entities/Reservation" },
+      "description": "Table reservations"
+    },
+    "/reservationDates/{dateKey}": {
+      "schema": { "$ref": "#/entities/ReservationDate" },
+      "description": "Date-level availability overrides"
+    },
+    "/reservationSlots/{slotKey}": {
+      "schema": { "$ref": "#/entities/ReservationSlot" },
+      "description": "Time-slot availability overrides"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Collection food orders"
+    },
+    "/feedback/{feedbackId}": {
+      "schema": { "$ref": "#/entities/Feedback" },
+      "description": "Customer feedback and complaints"
+    },
+    "/reviews/{reviewId}": {
+      "schema": { "$ref": "#/entities/Review" },
+      "description": "Customer reviews and testimonials"
+    },
+    "/media/{mediaId}": {
+      "schema": { "$ref": "#/entities/MediaItem" },
+      "description": "Media library assets"
+    }
+  }
+}

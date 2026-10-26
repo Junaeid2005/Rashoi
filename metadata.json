@@ -1,0 +1,6 @@
+{
+  "name": "Rashoi Indian Cuisine",
+  "description": "Authentic Indian cuisine, established 1989 in Windlesham, Surrey. Experience fine dining, online reservations, digital menu, and collection takeaway.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

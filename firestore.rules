@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'junaeidshohan@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Admins registry
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create, update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Menu Categories - public read, admin write
+    match /menuCategories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Menu Items - public read, admin write
+    match /menuItems/{itemId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Site Settings - public read, admin write
+    match /siteSettings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Reservation Dates - public read (for calendar availability), admin write
+    match /reservationDates/{dateKey} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Reservation Slots - public read, admin write
+    match /reservationSlots/{slotKey} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Reservations
+    match /reservations/{reservationId} {
+      allow read: if (isSignedIn() && resource.data.customerUid == request.auth.uid) || isAdmin();
+      allow create: if isSignedIn() && request.resource.data.customerUid == request.auth.uid;
+      allow update: if isAdmin() || (isSignedIn() && resource.data.customerUid == request.auth.uid && request.resource.data.status == 'cancelled');
+      allow delete: if isAdmin();
+    }
+
+    // Collection Orders
+    match /orders/{orderId} {
+      allow read: if (isSignedIn() && resource.data.customerUid == request.auth.uid) || isAdmin();
+      allow create: if isSignedIn() && request.resource.data.customerUid == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // Customer Feedback & Complaints
+    match /feedback/{feedbackId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Customer Reviews & Testimonials
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Media library items
+    match /media/{mediaId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
