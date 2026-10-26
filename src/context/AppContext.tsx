@@ -95,13 +95,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Check auth state & admin status
   useEffect(() => {
     testConnection();
-    seedInitialDatabaseIfEmpty();
 
     const unsubAuth = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
         const adminCheck = await checkUserIsAdmin(currentUser);
         setIsAdmin(adminCheck);
+        if (adminCheck) {
+          seedInitialDatabaseIfEmpty();
+        }
       } else {
         setIsAdmin(false);
       }

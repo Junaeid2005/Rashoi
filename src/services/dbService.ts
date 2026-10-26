@@ -13,7 +13,7 @@ import {
   serverTimestamp,
   writeBatch,
 } from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType, PRIMARY_ADMIN_EMAILS } from '../lib/firebase';
+import { db, auth, handleFirestoreError, OperationType, PRIMARY_ADMIN_EMAILS } from '../lib/firebase';
 import {
   SiteSettings,
   MenuCategory,
@@ -54,9 +54,20 @@ export async function checkUserIsAdmin(user: User | null): Promise<boolean> {
 }
 
 /**
- * Idempotently seed database on first run
+ * Idempotently seed database on first run if user is an authorized admin
  */
 export async function seedInitialDatabaseIfEmpty(): Promise<boolean> {
+  const current = auth.currentUser;
+  if (!current) {
+    // Unauthenticated visitors must not write to Firestore; they read existing data or use fallback
+    return false;
+  }
+
+  const isAdmin = await checkUserIsAdmin(current);
+  if (!isAdmin) {
+    return false;
+  }
+
   try {
     const settingsDoc = await getDoc(doc(db, 'siteSettings', 'main'));
     if (!settingsDoc.exists()) {
@@ -69,7 +80,7 @@ export async function seedInitialDatabaseIfEmpty(): Promise<boolean> {
 
     const categoriesSnap = await getDocs(collection(db, 'menuCategories'));
     if (categoriesSnap.empty) {
-      console.log('Seeding initial categories and menu items...');
+      console.log('Admin detected: Seeding initial categories and menu items...');
       const batch = writeBatch(db);
 
       for (const cat of INITIAL_CATEGORIES) {
@@ -99,14 +110,13 @@ export async function seedInitialDatabaseIfEmpty(): Promise<boolean> {
       }
 
       await batch.commit();
-      console.log('Database seeded successfully.');
+      console.log('Database seeded successfully by administrator.');
       return true;
     }
 
     return false;
   } catch (error) {
-    console.error('Error in seedInitialDatabaseIfEmpty:', error);
-    // Even if initial seeding fails (e.g. offline/permission during cold start), app gracefully uses fallback in memory
+    console.warn('Initial seeding bypassed or failed:', error);
     return false;
   }
 }
@@ -377,7 +387,8 @@ export function subscribeAllReservations(callback: (res: Reservation[]) => void)
 export async function updateReservationStatus(
   reservationId: string,
   status: Reservation['status'],
-  internalNotes?: string
+  internalNotes?: string,
+  assignedTable?: string
 ): Promise<void> {
   try {
     const updatePayload: Record<string, unknown> = {
@@ -386,6 +397,9 @@ export async function updateReservationStatus(
     };
     if (internalNotes !== undefined) {
       updatePayload.internalNotes = internalNotes;
+    }
+    if (assignedTable !== undefined) {
+      updatePayload.assignedTable = assignedTable;
     }
     await updateDoc(doc(db, 'reservations', reservationId), updatePayload);
   } catch (error) {

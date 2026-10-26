@@ -17,6 +17,7 @@ import {
   deleteMenuItem,
   saveReview,
   deleteReview,
+  seedInitialDatabaseIfEmpty,
 } from '../../services/dbService';
 import {
   Reservation,
@@ -602,19 +603,38 @@ export const AdminDashboard: React.FC = () => {
                         )}
 
                         <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-[#706866]">Status:</span>
-                            <span
-                              className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                                res.status === 'confirmed'
-                                  ? 'bg-emerald-100 text-emerald-800'
-                                  : res.status === 'pending'
-                                  ? 'bg-amber-100 text-amber-800'
-                                  : 'bg-gray-100 text-gray-800'
-                              }`}
-                            >
-                              {res.status}
-                            </span>
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-semibold text-[#706866]">Status:</span>
+                              <span
+                                className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                                  res.status === 'confirmed'
+                                    ? 'bg-emerald-100 text-emerald-800'
+                                    : res.status === 'pending'
+                                    ? 'bg-amber-100 text-amber-800'
+                                    : 'bg-gray-100 text-gray-800'
+                                }`}
+                              >
+                                {res.status}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 bg-[#FAF8F4] px-2 py-1 rounded border border-[#EAE4DF]">
+                              <span className="text-[11px] font-bold text-[#706866]">Table:</span>
+                              <input
+                                type="text"
+                                placeholder="e.g. Table 4"
+                                defaultValue={res.assignedTable || ''}
+                                onBlur={(e) => {
+                                  const val = e.target.value.trim();
+                                  if (val !== (res.assignedTable || '')) {
+                                    updateReservationStatus(res.reservationId, res.status, res.internalNotes, val);
+                                    showToast(`Assigned ${val || 'unassigned'} to ${res.customerName}`, 'success');
+                                  }
+                                }}
+                                className="bg-white border border-[#EAE4DF] rounded px-2 py-0.5 text-xs w-28 font-medium focus:outline-none focus:border-[#7B202B]"
+                              />
+                            </div>
                           </div>
 
                           <div className="flex items-center gap-2">
@@ -1683,6 +1703,22 @@ export const AdminDashboard: React.FC = () => {
                       <strong>Google Business Profile & Search Console:</strong> Verify <code>https://www.rashoi.co.uk</code> in Google Search Console and submit <code>/sitemap.xml</code>.
                     </li>
                   </ul>
+
+                  <div className="pt-3 border-t border-[#EAE4DF]">
+                    <button
+                      onClick={async () => {
+                        const seeded = await seedInitialDatabaseIfEmpty();
+                        if (seeded) {
+                          showToast('Initial menu categories and dishes synced into Firestore!', 'success');
+                        } else {
+                          showToast('Menu data is already present in Firestore.', 'info');
+                        }
+                      }}
+                      className="bg-[#7B202B] hover:bg-[#5D1720] text-white text-xs font-semibold px-4 py-2 rounded cursor-pointer"
+                    >
+                      Sync / Refresh Initial Menu into Firestore
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

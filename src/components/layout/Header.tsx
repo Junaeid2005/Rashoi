@@ -163,6 +163,17 @@ export const Header: React.FC = () => {
             >
               Contact
             </button>
+            <button
+              onClick={() => handleNav('my-account')}
+              className={`text-sm font-semibold tracking-wide transition-colors cursor-pointer flex items-center gap-1.5 px-2.5 py-1 rounded-sm ${
+                currentView === 'my-account'
+                  ? 'bg-[#7B202B] text-white'
+                  : 'bg-[#FAF8F4] text-[#7B202B] hover:bg-[#EAE4DF] border border-[#EAE4DF]'
+              }`}
+            >
+              <UserIcon className="w-3.5 h-3.5 text-[#C5A15B]" />
+              My Orders & Bookings
+            </button>
           </nav>
 
           {/* Action controls */}
@@ -323,16 +334,22 @@ export const Header: React.FC = () => {
               Contact & Directions
             </button>
 
-            {user && (
-              <button
-                onClick={() => handleNav('my-account')}
-                className={`text-left px-3 py-2 rounded text-base font-medium border-t border-[#EAE4DF] pt-3 ${
-                  currentView === 'my-account' ? 'bg-[#FAF8F4] text-[#7B202B] font-semibold' : 'text-[#252020]'
-                }`}
-              >
-                My Reservations & Orders
-              </button>
-            )}
+            <button
+              onClick={() => handleNav('my-account')}
+              className={`text-left px-3 py-2.5 rounded text-base font-semibold flex items-center justify-between border transition-all ${
+                currentView === 'my-account'
+                  ? 'bg-[#5D1720] text-white border-[#5D1720]'
+                  : 'bg-[#FAF8F4] text-[#7B202B] border-[#EAE4DF] hover:bg-[#EAE4DF]'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <UserIcon className="w-4 h-4 text-[#C5A15B]" />
+                <span>Customer Dashboard (Orders & Tables)</span>
+              </div>
+              <span className="text-xs bg-[#7B202B] text-white px-2 py-0.5 rounded font-bold">
+                View
+              </span>
+            </button>
 
             {isAdmin && (
               <button

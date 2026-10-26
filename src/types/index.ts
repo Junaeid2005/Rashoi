@@ -125,6 +125,7 @@ export interface Reservation {
   reservationDate: string; // YYYY-MM-DD
   reservationTime: string; // HH:mm
   numberOfGuests: number;
+  assignedTable?: string; // Assigned table number or seating area (e.g. Table 4, Main Hall)
   specialRequests?: string;
   status: 'pending' | 'confirmed' | 'rejected' | 'cancelled' | 'completed';
   internalNotes?: string;

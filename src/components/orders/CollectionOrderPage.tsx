@@ -185,10 +185,14 @@ export const CollectionOrderPage: React.FC = () => {
 
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
-                onClick={() => setCurrentView('my-account')}
-                className="w-full sm:w-auto bg-[#7B202B] hover:bg-[#5D1720] text-white text-xs font-semibold uppercase tracking-wider px-6 py-3 rounded cursor-pointer"
+                onClick={() => {
+                  setCurrentView('my-account');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full sm:w-auto bg-[#7B202B] hover:bg-[#5D1720] text-white text-xs font-bold uppercase tracking-wider px-6 py-3 rounded cursor-pointer shadow-md flex items-center justify-center gap-2"
               >
-                Track My Order Status
+                <span>Track in Customer Dashboard</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setCurrentView('menu')}
