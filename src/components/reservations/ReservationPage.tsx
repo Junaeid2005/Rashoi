@@ -136,7 +136,7 @@ export const ReservationPage: React.FC = () => {
         reservationDate: date,
         reservationTime: time,
         numberOfGuests: guests,
-        specialRequests: specialRequests.trim() || undefined,
+        specialRequests: specialRequests.trim() ? specialRequests.trim() : '',
       });
 
       setSubmittedId(resId);

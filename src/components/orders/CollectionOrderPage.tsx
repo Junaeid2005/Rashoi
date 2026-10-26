@@ -113,7 +113,7 @@ export const CollectionOrderPage: React.FC = () => {
         total: cartTotal,
         collectionDate,
         collectionTime,
-        notes: notes.trim() || undefined,
+        notes: notes.trim() ? notes.trim() : '',
       });
 
       setSubmittedOrderId(orderId);

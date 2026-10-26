@@ -43,10 +43,10 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
     setSubmitting(true);
     try {
       await submitFeedback({
-        customerUid: user?.uid,
+        customerUid: user?.uid || '',
         name: name.trim(),
         email: email.trim(),
-        phone: phone.trim() || undefined,
+        phone: phone.trim() ? phone.trim() : '',
         category,
         message: message.trim(),
       });

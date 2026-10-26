@@ -319,6 +319,29 @@ export async function setSlotClosed(slotKey: string, date: string, time: string,
 }
 
 /**
+ * Helper to ensure no undefined fields are passed to Firestore setDoc
+ */
+function sanitizeForFirestore<T extends Record<string, unknown>>(data: T): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (value !== undefined) {
+      if (value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date)) {
+        result[key] = sanitizeForFirestore(value as Record<string, unknown>);
+      } else if (Array.isArray(value)) {
+        result[key] = value.map((item) =>
+          item !== null && typeof item === 'object' && !(item instanceof Date)
+            ? sanitizeForFirestore(item as Record<string, unknown>)
+            : item
+        );
+      } else {
+        result[key] = value;
+      }
+    }
+  }
+  return result;
+}
+
+/**
  * RESERVATIONS
  */
 export async function createReservation(resData: Omit<Reservation, 'reservationId' | 'status' | 'createdAt'>): Promise<string> {
@@ -339,12 +362,13 @@ export async function createReservation(resData: Omit<Reservation, 'reservationI
   const newReservation: Reservation = {
     ...resData,
     reservationId,
+    specialRequests: resData.specialRequests ? resData.specialRequests.trim() : '',
     status: 'pending',
     createdAt: new Date().toISOString(),
   };
 
   try {
-    await setDoc(doc(db, 'reservations', reservationId), newReservation);
+    await setDoc(doc(db, 'reservations', reservationId), sanitizeForFirestore(newReservation as unknown as Record<string, unknown>));
     return reservationId;
   } catch (error) {
     handleFirestoreError(error, OperationType.CREATE, `reservations/${reservationId}`);
@@ -414,13 +438,14 @@ export async function createOrder(orderData: Omit<Order, 'orderId' | 'status' | 
   const orderId = 'RSH-' + Math.floor(100000 + Math.random() * 900000);
   const newOrder: Order = {
     ...orderData,
+    notes: orderData.notes ? orderData.notes.trim() : '',
     orderId,
     status: 'pending',
     createdAt: new Date().toISOString(),
   };
 
   try {
-    await setDoc(doc(db, 'orders', orderId), newOrder);
+    await setDoc(doc(db, 'orders', orderId), sanitizeForFirestore(newOrder as unknown as Record<string, unknown>));
     return orderId;
   } catch (error) {
     handleFirestoreError(error, OperationType.CREATE, `orders/${orderId}`);
@@ -479,13 +504,15 @@ export async function submitFeedback(feedbackData: Omit<Feedback, 'feedbackId' |
   const feedbackId = 'fb_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
   const newFeedback: Feedback = {
     ...feedbackData,
+    phone: feedbackData.phone ? feedbackData.phone.trim() : '',
+    customerUid: feedbackData.customerUid || '',
     feedbackId,
     status: 'unread',
     createdAt: new Date().toISOString(),
   };
 
   try {
-    await setDoc(doc(db, 'feedback', feedbackId), newFeedback);
+    await setDoc(doc(db, 'feedback', feedbackId), sanitizeForFirestore(newFeedback as unknown as Record<string, unknown>));
     return feedbackId;
   } catch (error) {
     handleFirestoreError(error, OperationType.CREATE, `feedback/${feedbackId}`);
